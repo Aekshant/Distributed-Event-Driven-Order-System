@@ -31,7 +31,7 @@ app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 def read_root():
-    print("PRINT WORKS")
+    print("PRINT WORKS----")
     logger.info("This log will definitely show up in your terminal!")
     return {"Hello": "World"}
 

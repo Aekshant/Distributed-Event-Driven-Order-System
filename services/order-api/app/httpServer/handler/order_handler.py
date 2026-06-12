@@ -26,7 +26,8 @@ class OrderHandler:
             return fail_response("Unexpected server error", status_code=HTTPStatus.INTERNAL_SERVER_ERROR)
 
     async def get_by_id(self, order_id: UUID):
-        self.logger.info("Handler called")
-        data = await self.service.get_by_id(order_id)
-        self.logger.info(f"DATA = {data}")
-        return ok_response(data, "Success")
+        try:
+            data = await self.service.get_by_id(order_id)
+            return ok_response(data, "Success")
+        except Exception as e:
+            return fail_response("Unexpected server error", status_code=HTTPStatus.INTERNAL_SERVER_ERROR)
