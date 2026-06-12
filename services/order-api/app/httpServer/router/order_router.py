@@ -3,7 +3,7 @@ from uuid import UUID
 
 from app.httpServer.handler.order_handler import OrderHandler
 from app.di.order_di import get_order_usecases
-from app.usecases.order import OrderService
+from app.usecases.order_usecases import OrderService
 from app.domain.orders.order_dto import (
     CreateOrderRequestDTO,
     ResponseDTO
@@ -26,7 +26,15 @@ async def get_order(
 ):
     return await handler.get_by_id(order_id)
 
-@router.post("")
+@router.get("/")
+async def get_order(
+    limit: int = None,
+    page: int = None,
+    handler: OrderHandler = Depends(get_order_handler)
+):
+    return await handler.get_list(limit, page)
+
+@router.post("/")
 async def create_order(
     request: CreateOrderRequestDTO,
     handler: OrderHandler = Depends(get_order_handler)

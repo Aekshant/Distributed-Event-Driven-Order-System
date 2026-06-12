@@ -2,10 +2,11 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from app.infra.sqlAlchemy.config.session_sqlAlchemy import get_db
+from app.di.order_history_di import get_order_history_usecases
 from app.infra.sqlAlchemy.repo.order_repo import (
     OrderRepository
 )
-from app.usecases.order import (
+from app.usecases.order_usecases import (
     OrderService
 )
 
@@ -17,6 +18,7 @@ def get_order_repository(
 
 
 def get_order_usecases(
-    repo = Depends(get_order_repository)
+    repo = Depends(get_order_repository),
+    order_history_repo = Depends(get_order_history_usecases)
 ):
-    return OrderService(repo)
+    return OrderService(repo, order_history_repo)

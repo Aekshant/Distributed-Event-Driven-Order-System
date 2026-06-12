@@ -26,14 +26,7 @@ async def lifespan(app: FastAPI):
     yield
     logger.info("Application shutting down...")
 
-app = FastAPI(lifespan=lifespan)
-
-
-@app.get("/")
-def read_root():
-    print("PRINT WORKS----")
-    logger.info("This log will definitely show up in your terminal!")
-    return {"Hello": "World"}
+app = FastAPI(lifespan=lifespan, debug=True)
 
 app.add_middleware(
     CORSMiddleware,

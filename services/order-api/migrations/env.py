@@ -5,6 +5,7 @@ from sqlalchemy.engine import URL
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from app.infra.sqlAlchemy.model.order_model import OrderModel
+from app.infra.sqlAlchemy.model.order_history_model import OrderHistoryModel
 from alembic import context
 
 # this is the Alembic Config object, which provides
