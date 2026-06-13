@@ -20,12 +20,12 @@ class OrderHandler:
         self.logger = logging.getLogger("uvicorn.error")
 
     async def create_order(self, request: CreateOrderRequestDTO):
-        # try:
+        try:
             self.logger.info(f"DATA = {request}")
             data = await self.service.create_order(request)
             return ok_response(data, "Success", status_code=HTTPStatus.CREATED)
-        # except Exception as e:
-        #     return fail_response("Unexpected server error", status_code=HTTPStatus.INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return fail_response("Unexpected server error", status_code=HTTPStatus.INTERNAL_SERVER_ERROR)
 
     async def get_by_id(self, order_id: UUID):
         try:

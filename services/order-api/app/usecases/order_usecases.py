@@ -43,6 +43,7 @@ class OrderService:
             status="PENDING"
         )
         await self.order_history_service.create_order(order_status)
+        # Kafka Event
         return order_db_data
 
     async def get_by_id(self, order_id: UUID) -> Optional[Order]:
