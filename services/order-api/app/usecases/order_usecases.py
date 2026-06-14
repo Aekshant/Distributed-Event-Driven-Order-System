@@ -1,26 +1,26 @@
 import uuid
-
-from fastapi import Depends
 from typing import List, Optional
 from datetime import datetime
 from uuid import UUID
 
 from app.di.order_history_di import get_order_history_usecases
 from app.usecases.order_history_usecases import OrderHistoryService
+from app.infra.kafka.main_kafka import KafkaProducerService
 from app.domain.orders.order_dto import CreateOrderRequestDTO, Order
 from app.domain.orders_history.order_history_dto import CreateOrderHistoryRequestDTO, OrderHistory
 from app.domain.orders.order_dao import OrderDAO  # Your interface
-
+from app.core.config import config
 
 class OrderService:
     def __init__(
             self,
             order_dao: OrderDAO,
-            order_history_service: OrderHistoryService
+            order_history_service: OrderHistoryService,
+            kafka_producer: KafkaProducerService
     ):
         self.order_dao = order_dao
         self.order_history_service = order_history_service
-
+        self.kafka_service = kafka_producer
 
     async def create_order(
             self,
@@ -43,7 +43,20 @@ class OrderService:
             status="PENDING"
         )
         await self.order_history_service.create_order(order_status)
+
+        event = {
+            "event_type": "order.created",
+            "order_id": str(order_db_data.id),
+            "created_at": order_db_data.created_at.isoformat(),
+            "occurred_at": datetime.utcnow().isoformat(),
+        }
+        # print(config.kafka["topics"])
         # Kafka Event
+        await self.kafka_service.publish(
+            topic="order.created",
+            key=str(order_db_data.id),
+            message=event,
+        )
         return order_db_data
 
     async def get_by_id(self, order_id: UUID) -> Optional[Order]:

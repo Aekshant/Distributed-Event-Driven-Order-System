@@ -1,16 +1,12 @@
 
 from http import HTTPStatus
 import logging
-
-from sqlalchemy import Null
+from uuid import UUID
 
 from app.usecases.order_usecases import OrderService
 from app.httpServer.common import fail_response, ok_response
-from uuid import UUID
-from fastapi import HTTPException
 from app.domain.orders.order_dto import (
-    CreateOrderRequestDTO,
-    OrderResponseDTO
+    CreateOrderRequestDTO
 )
 
 
@@ -20,12 +16,12 @@ class OrderHandler:
         self.logger = logging.getLogger("uvicorn.error")
 
     async def create_order(self, request: CreateOrderRequestDTO):
-        try:
+        # try:
             self.logger.info(f"DATA = {request}")
             data = await self.service.create_order(request)
             return ok_response(data, "Success", status_code=HTTPStatus.CREATED)
-        except Exception as e:
-            return fail_response("Unexpected server error", status_code=HTTPStatus.INTERNAL_SERVER_ERROR)
+        # except Exception as e:
+        #     return fail_response("Unexpected server error", status_code=HTTPStatus.INTERNAL_SERVER_ERROR)
 
     async def get_by_id(self, order_id: UUID):
         try:

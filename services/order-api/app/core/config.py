@@ -14,10 +14,16 @@ class HTTPConfig(BaseModel):
     cors_allow_headers: list[str]
     cors_allow_credentials: bool
 
+class KafkaConfig(BaseModel):
+    host: str
+    topics: dict
 
 class Config(BaseModel):
     db: DBConfig
     http: HTTPConfig
+    kafka: KafkaConfig
+
+
 
 
 config = Config(
@@ -26,6 +32,12 @@ config = Config(
         user="postgres",
         password="root123",
         database="orders",
+    ),
+    kafka = KafkaConfig(
+        host="localhost:9092",
+        topics = {
+            "order_create" : "order.created"
+        }
     ),
     http=HTTPConfig(
         cors_allow_origins=["*"],

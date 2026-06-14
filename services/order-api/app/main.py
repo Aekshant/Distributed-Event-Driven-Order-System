@@ -2,9 +2,10 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI
 import logging
-import sys
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+
+from app.infra.kafka.main_kafka import kafka_producer
 from app.core.config import config
 from app.httpServer.main import router
 
@@ -23,8 +24,14 @@ configure_logging()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Application starting...")
+
+    await kafka_producer.start()
+
     yield
+
+    await kafka_producer.stop()
     logger.info("Application shutting down...")
+
 
 app = FastAPI(lifespan=lifespan, debug=True)
 
